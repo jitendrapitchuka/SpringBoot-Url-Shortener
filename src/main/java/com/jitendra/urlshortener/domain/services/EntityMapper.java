@@ -29,6 +29,7 @@ public class EntityMapper {
     }
 
     public UserDto toUserDto(User user){
+        if(user==null){ return null; }
         return new UserDto(user.getId(), user.getName());
     }
 }
