@@ -12,6 +12,8 @@ This is a URL shortener application built with **Spring Boot**, **Flyway**, and 
 
 ---
 
+## New things that learned from this project :
+
 ### 🛠️ Useful configuration / Annotation
 
 The application is configured using `application.properties` and `@ConfigurationProperties` in Spring Boot.
