@@ -63,3 +63,12 @@ When you set `spring.jpa.open-in-view=false`, the Hibernate session is closed af
 ```properties
 # Disable open-in-view to prevent lazy loading and solve the N+1 problem
 spring.jpa.open-in-view=false
+
+```
+### 📌 **Note:** In Spring Data JPA, pagination is **zero-based**.  
+
+> This means the first page starts at `page = 0`, not `page = 1`.
+> 
+> ✅ Example: `PageRequest.of(0, 10)` returns the **first page** with 10 items.
+> 
+> Refer in the project for more info.

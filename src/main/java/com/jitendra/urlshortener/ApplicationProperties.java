@@ -10,9 +10,16 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app")
 @Validated
 public record ApplicationProperties(
-  @NotBlank
-  @DefaultValue ("http://localhost:8080") String baseUrl,
-@DefaultValue("30")@Min(1) @Max(365) int defaultExpiryInDays,
-  @DefaultValue("true") boolean validateOriginalUrl
+        @NotBlank
+        @DefaultValue("http://localhost:8080")
+        String baseUrl,
+        @DefaultValue("30")
+        @Min(1)
+        @Max(365)
+        int defaultExpiryInDays,
+        @DefaultValue("true")
+        boolean validateOriginalUrl,
+        @DefaultValue("10")
+        int pageSize
 ) {
 }
