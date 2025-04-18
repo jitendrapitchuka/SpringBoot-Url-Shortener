@@ -74,3 +74,99 @@ spring.jpa.open-in-view=false
 > ✅ Example: `PageRequest.of(0, 10)` returns the **first page** with 10 items.
 > 
 > Refer in the project for more info.
+> 
+### ✅ @Modifying
+
+
+This annotation tells Spring Data JPA:  
+👉 “This query modifies data (e.g., `DELETE` or `UPDATE`), not just `SELECT`.”
+
+It’s required because by default, Spring Data assumes repository methods are **read-only** unless told otherwise.
+
+#### 🔧 Example usage:
+
+```java
+    @Modifying
+    void deleteByIdInAndCreatedById(List<Long> ids, Long userId);
+```
+
+
+# 🛠 JDBC Access in Spring: JdbcTemplate vs JdbcClient
+
+Spring provides multiple options for accessing relational databases using JDBC. Below is a comparison of the traditional `JdbcTemplate` and the modern `JdbcClient` introduced in **Spring Framework 6+**, along with usage examples for named parameters.
+
+---
+
+## 📌 1. JdbcTemplate (Classic)
+
+### ✅ Pros:
+- Stable and widely used.
+- Available in all versions of Spring.
+
+### ❌ Cons:
+- ❌ No support for named parameters.
+- ❌ More verbose and requires boilerplate.
+
+### 🔧 Example (Positional Parameters):
+
+Positional parameters use `?` placeholders. You must pass values in the correct order.
+
+```java
+@Autowired
+private JdbcTemplate jdbcTemplate;
+
+public void saveUser(String email, String password) {
+    String sql = "INSERT INTO users (email, password) VALUES (?, ?)";
+    jdbcTemplate.update(sql, email, password);
+}
+
+@Autowired
+private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+public void saveUser(String email, String password) {
+        String sql = "INSERT INTO users (email, password) VALUES (:email, :password)";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("email", email);
+        params.put("password", password);
+
+        namedParameterJdbcTemplate.update(sql, params);
+        }
+```
+## 🚀 Using `JdbcClient` in Spring Framework 6+
+
+`JdbcClient` is a modern, fluent alternative to `JdbcTemplate`, introduced in **Spring Framework 6+**.  
+It supports:
+
+- ✅ Named parameters (built-in)
+- ✅ Fluent, chainable API
+- ✅ Lambda support for mapping
+- ✅ Generated key handling
+- ✅ Cleaner syntax and less boilerplate
+
+---
+
+### ✅ Setup
+In **`JdbcClient`**, the **named parameters** in the SQL query (e.g., `:email`, `:password`) must exactly match the parameter names used in the `.param()` method calls.
+
+```java
+   public void save(User user) {
+        String sql = """
+                INSERT INTO users (email, password, name, role, created_at)
+                VALUES (:email, :password, :name, :role, :createdAt)
+                RETURNING id
+                """;
+        var keyHolder = new GeneratedKeyHolder();
+        jdbcClient.sql(sql)
+                .param("email", user.getEmail())
+                .param("password", user.getPassword())
+                .param("name", user.getName())
+                .param("role", user.getRole().name())
+                .param("createdAt", Timestamp.from(user.getCreatedAt()))
+                .update(keyHolder);
+        Long userId = keyHolder.getKeyAs(Long.class);
+        log.info("User saved with id: {}", userId);
+    }
+```
+
+
